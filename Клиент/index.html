@@ -1,0 +1,354 @@
+ <!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" rel="stylesheet" media="all" href="css/style.css" id="theme_css" />
+	<script src="js/vue.js" defer></script>
+	<script src="js/main.js" defer></script>
+	<title>GoMap</title>
+</head>
+<body>
+	<div id="app">
+		<header>
+			<div class="divHeader_1">
+				<img title="Название" src="img/logo.png" height="80" class="log_name">
+			</div>
+			<nav>
+				<div><a href="#" v-on:click.prevent="switchingPage('info');">О нас</a></div>
+				<div><a href="#" v-on:click.prevent="switchingPage('main');">Главная страница</a></div>
+				<div><a href="#" v-on:click.prevent="switchingPage('reviews');">Отзывы</a></div>
+				<div><a href="#" v-on:click.prevent="switchingPage('feedback');">Обратная связ</a></div>
+				<template v-if="user.name != ''">
+					<div><a href="#" v-on:click.prevent="switchingPage('user');">Профиль</a></div>
+				</template>
+				<template v-else>
+					<div><a href="#" v-on:click.prevent="switchingPage('login');">Войти</a></div>
+				</template>
+				<!-- <div><a v-if="search.length==0" title="Меню" href="#" v-on:click.prevent="openMenu()">&#8942;</a></div> -->	
+			</nav>
+		</header>
+		<div id="main">	
+			<div v-if="tab == 'info'">	
+				<div class="block">
+					<span class="title">Кто мы такие?</span>
+					<p>GoMap - первая офицальная служба доставки по миру</p>
+					<p>С нами вы сможете получить свой товар или отправленый предмет с другова уголька мира</p>
+					<p>{{getInfo}}</p>
+				</div>
+
+					<div class="block">
+						<span class="title">Что мы можем вам дать</span>
+						<p>Быстрая достака</p>
+						<p>Горантия надежности</p>
+						<p>Разные тарифы</p>
+					</div>
+
+					<div class="block">
+						<span class="title">Тарифы</span>
+						<p>ЭкономДоставка - Самый дешевый тариф, мы доставим товар на почту</p>
+						<p>МастерДоставка - Более дорогой тариф, все превудущие пункты, но ещё добавляется доставка на дом</p>
+						<p>КоролевскаяДоставка - Самый дорогой тариф, все превудущие пункты, но тавар прибудет горазда быстрее, и с проверкой на целостеость</p>
+					</div>
+			</div>
+			<div v-if="tab == 'main'">	
+				<div class="block">
+					<span class="title">Добро пожаловать на сайт компании GoMap</span>
+					<div class="title_p">
+						<p>Тут вы сможете оформить заказ на отправку предмета</p>
+						<p>Если вы комерцеское лицо которое хочеть отравлять свою продукцию через нашу компанию свяжитесь с нами через ОБРАТНАЯ СВЯЗ</p>
+					</div>
+				</div>
+				<div class="block mini_block">
+					<span class="title">Оформления заказа</span>
+					<form action="">
+						<div>
+							<label for="from_address">Адрес от куда</label>
+							<a href="#" class="info_icon" @click.prevent="setOpenInfo('Адрес от куда')">🛈</a>
+							<span v-if="openInfo == 'Адрес от куда'">
+								<p>Мы соберём вашу посылку из ваших рук</p>
+							</span>
+							<br>
+							<input type="text" name="from_address">
+						</div>
+						<div>
+							<label for="the_address">Адрес до куда</label>
+							<a href="#" class="info_icon" @click.prevent="setOpenInfo('Адрес до куда')">🛈</a>
+							<span v-if="openInfo == 'Адрес до куда'">
+								<p>Куда доставить посылку? При тарифе ЭкономДоставка посылка будет доставлена, на блежащию почту от места адреса</p>
+							</span>
+							<br>
+							<input type="text" name="the_address">
+						</div>
+						<div>
+							<label class="checkbox-btn is_sum_wt">
+								<input type="checkbox" name="is_sum_wt" v-model="is_sum_wt">
+								<span>Мне изместен вес предметов</span>
+							</label>
+						</div>
+						<div v-if="is_sum_wt">
+							<label for="firstname">Суммарный вес (кг)</label>
+							<br>
+							<input type="number" value="1" min="0.1" step="0.1" name="sum_wt" v-model="sum_wt">
+						</div>
+
+						<div>
+							<label class="checkbox-btn is_sum_size">
+								<input type="checkbox" name="is_sum_size" v-model="is_sum_size">
+								<span>Мне изместен объём предметов</span>
+							</label>
+						</div>
+						<div v-if="is_sum_size">
+							<label for="firstname">Суммарный объём предметов (м)</label>
+							<br>
+							<input type="number" value="1" min="0.1" step="0.1" name="sum_size" v-model="sum_size">
+						</div>
+
+						<div class="rate">
+							<label for="rate">Тариф</label>
+							<a href="#" class="info_icon" @click.prevent="setOpenInfo('Тариф')">🛈</a>
+							<span v-if="openInfo == 'Тариф'">
+								<p>ЭкономДоставка - Самый дешевый тариф, мы доставим товар на почту</p>
+								<p>МастерДоставка - Более дорогой тариф, все превудущие пункты, но ещё добавляется доставка на дом</p>
+								<p>КоролевскаяДоставка - Самый дорогой тариф, все превудущие пункты, но тавар прибудет горазда быстрее, и с проверкой на целостеость</p>
+							</span>
+							<br>
+					<label class="checkbox-btn pressed_input_list">
+								<input type="radio" name="rate" id="ЭкономДоставка" value="ЭкономДоставка" checked v-model="rate">
+								<span>ЭкономДоставка</span>
+							</label>
+							<label class="checkbox-btn pressed_input_list">
+								<input type="radio" name="rate" id="МастерДоставка" value="МастерДоставка" v-model="rate" v-model="rate">
+								<span>МастерДоставка</span>
+							</label>
+							<label class="checkbox-btn pressed_input_list">
+								<input type="radio" name="rate" id="КоролевскаяДоставка" value="КоролевскаяДоставка" v-model="rate">
+								<span>КоролевскаяДоставка</span>
+							</label>
+						</div>
+
+						<div class="attributes">
+							<label for="rate">Атрибуты доставки</label>	
+							<a href="#" class="info_icon" @click.prevent="setOpenInfo('Атрибуты доставки')">🛈</a>
+							<span v-if="openInfo == 'Атрибуты доставки'">
+								<p>Хрупкий - Мы будем окуратно обращятся с вещю которая находится внутри чтоб не разбить её</p>
+								<p>Не мочить - Мы будем держать её в более сухом месте, так же покроем её водаоталькивающей пленкой</p>
+								<p>Не переворачивать - Мы будем сдедить чтоб посылка не переворачивалась и была всегда вертикально поставленая</p>
+								<p>Не трести - Мы будем сдедить чтоб посылка не треслась во время поездки</p>
+							</span>
+							<br>
+							<label class="checkbox-btn pressed_input_list">
+								<input type="checkbox" name="attributes" id="Хрупкий" value="Хрупкий">
+								<span>Хрупкий</span>
+							</label>
+							<label class="checkbox-btn pressed_input_list">
+								<input type="checkbox" name="attributes" id="Не мочить" value="Не мочить">
+								<span>Не мочить</span>
+							</label>
+							<label class="checkbox-btn pressed_input_list">
+								<input type="checkbox" name="attributes" id="Не переворачивать" value="Не переворачивать">
+								<span>Не переворачивать</span>
+							</label>
+							<label class="checkbox-btn pressed_input_list">
+								<input type="checkbox" name="attributes" id="Не трести" value="Не трести">
+								<span>Не трясти</span>
+							</label>
+						</div>
+						<input class="button" type="submit" value="Отправить заказ">
+						<br>
+						<span class="price"><p>Цена:</p> <p>{{getPrice}}</p> </span>
+					</form>
+				</div>
+			</div>
+
+			<div v-if="tab == 'reviews'">
+				<div class="block block_center">
+					<span class="title">
+						Отзывы
+					</span>
+					<span class="text_s_2">Тут вы можете ознакомитца с отзывами которые оставили другие пользователи. Чтобы написать свой отзыв вы должны быть зарегестрированы.</span>
+				</div>
+
+				<!-- <div class="block mini_block content_center">
+					<span class="title">Написать отзыв</span>
+					<form action="">
+						<div>
+							<label for="name">Имя</label>
+							<br>
+							<input type="text" name="name" v-model="review_name">
+						</div>
+						<div>
+							<label for="review">Сообщения</label>
+							<br>
+							<textarea class="review" name="review" v-model="review_review"></textarea>
+						</div>
+						<div class="div_stars">
+							<ul class="flex_stars">
+						
+								<li class="stars" v-for="i in 5" @click="setReview_star_count(i)">
+									<template v-if="i <= review_star_count">★</template>
+									<template v-else>☆</template>
+								</li>
+							</ul>
+						</div>
+						<input class="button" type="submit" value="Оставить отзыв" @click.prevent="postReqReview()">
+					</form>
+				</div> -->
+
+					<div class="flex">
+						<div class="block micro_block flex_block" v-for="item in 11">
+							<span class="name">Имя пользователя</span>
+							<span class="datetime">Дата и время отзыва</span>
+							<div class="div_stars">
+								<ul class="flex_stars">
+									<li class="stars" v-for="i in 5">
+										<template v-if="i <= item">★</template>
+										<template v-else>☆</template>
+									</li>
+								</ul>
+							</div>		
+							<br>
+							<span class="feedback">Отзыв пользователя -----------------------------------------------------------------------------------------------------------------</span>					
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="tab == 'feedback'">
+				<div class="block mini_block">
+					<span class="title">
+						Обратная свзяь
+					</span>
+					<p>
+						Номер телефона:
+						<ul>
+							<li>+1234567890</li>
+							<li>+2141414215</li>
+							<li>+1414142424</li>
+						</ul>
+					</p>
+					<p>
+						Электроная почта:
+						<ul>
+							<li>email@email.com</li>
+							<li>email2@email.com</li>
+						</ul>
+					</p>
+					<p>
+						Физический адрес:
+						<ul>
+							<li>Архангельская область, город Воскресенск, шоссе Ломоносова, 88</li>
+							<li>Мурманская область, город Красногорск, спуск Ленина, 93</li>
+							<li>Новосибирская область, город Зарайск, шоссе Бухарестская, 64</li>
+							<li>Омская область, город Павловский Посад, пр. Балканская, 61</li>
+							<li>Омская область, город Раменское, пер. Сталина, 15</li>
+						</ul>
+					</p>
+				</div>
+			</div>
+			
+			<div v-if="tab == 'login'">
+				<div class="block mini_block content_center">
+					<span class="title">
+						Вход
+					</span>
+					<form action="">
+						<!-- <div>
+							<label for="firstname">Имя</label>
+							<br>
+							<input type="text" name="firstname">
+						</div>
+						<div>
+							<label for="lastname">Фамилия</label>
+							<br>
+							<input type="text" name="lastname">
+						</div> -->
+						<div>
+							<label for="email">Почта</label>
+							<br>
+							<input type="text" name="email" v-model="user_email">
+						</div>
+						<div>
+							<label for="password">Пароль</label>
+							<br>
+							<input type="text" name="password" v-model="user_password">
+						</div>
+						<input class="button" type="submit" value="Войти" @click.prevent="postReqLogin()">
+					</form>
+					<a title="Регестрация" href="#" v-on:click.prevent="switchingPage('register');">Регестрация</a>
+				</div>
+			</div>
+			
+			<div v-if="tab == 'register'">
+				<div class="block mini_block content_center">
+					<span class="title">
+						Вход
+					</span>
+					<form action="">
+						<!-- <div>
+							<label for="firstname">Имя</label>
+							<br>
+							<input type="text" name="firstname">
+						</div>
+						<div>
+							<label for="lastname">Фамилия</label>
+							<br>
+							<input type="text" name="lastname">
+						</div> -->
+						<div>
+							<label for="name">Имя</label>
+							<br>
+							<input type="text" name="name" v-model="user_name">
+						</div>
+						<div>
+							<label for="login">Почта</label>
+							<br>
+							<input type="text" name="login" v-model="user_email">
+						</div>
+						<div>
+							<label for="password">Пароль</label>
+							<br>
+							<input type="text" name="password" v-model="user_password">
+						</div>
+						<input class="button" type="submit" value="Регестрация и вход" @click.prevent="postRegisterUser()">
+					</form>
+					<a title="Вход" href="#" v-on:click.prevent="switchingPage('login');">Вход</a>
+				</div>
+			</div>	
+
+			<div v-if="tab == 'user'">
+				<div class="block">
+					<span class="title dis_b content_center">Мои заказы</span>
+				</div>
+				<div class="flex">
+					<div class="block micro_block flex_block" v-for="item in 11">
+						<span class="title text_s_4">№ {{item}}</span>
+						<!-- <img class="width_max block_center" src="img/free-icon-avatar-168871.png" alt=""> -->
+						<span class="text_s_2">Адреса:
+							<ul>
+								<li>
+									от 123
+								</li>
+								<li>
+									до 456
+								</li>
+							</ul>
+						</span>
+						<span class="text_s_2">
+							Тариф: 456
+						</span>
+						<br>
+						<span class="text_s_2">
+							Требование: 
+							<ul>
+								<li v-for="item in 4">
+									{{item}}
+								</li>
+							</ul>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
