@@ -19,5 +19,5 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::post('/user/login', 'UserController@login')->name('login');
-Route::post('/user/register', 'UserController@register')->name('register');
+Route::post('/user/login', [UserController::class, 'login'])->name('login');
+Route::post('/user/register', [UserController::class, 'register'])->name('register');
